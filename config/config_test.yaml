@@ -1,0 +1,109 @@
+# validation location
+location: 
+  # latitude and longitude in degrees
+  # should be the same location as baseline dataset
+  lat: 45.57451
+  lon: -120.74734
+
+time:
+  window:
+    # validation period start time
+    start: 2016-09-23 12:00:00
+    # validation period end time
+    end: 2016-09-25 12:00:00
+
+# validation metrics to be calculated and plotted
+metrics:
+  - rmse
+  - crmse
+  - bias
+  - bias_pct
+  - mae
+  - mae_pct
+
+levels: 
+  # height level of validation above ground level
+  height_agl: 
+    - 40
+    - 80
+    - 120
+  height_units: m
+
+# baseline dataset
+base:
+  name: sodar
+
+  # data directory
+  # path: data/mw_data_sodar
+
+  # add sodar.z06.b0.20160924.170000.txt2.a2e.nc, sodar.z06.b0.20160924.171001.txt2.a2e.nc
+  # path: data/test_sodar_dup
+  
+  # delete sodar.z06.b0.20160924.170000.txt.a2e.nc
+  # path: data/test_sodar_gap
+  
+  # duplicate & missing data
+  # path: data/test_sodar_dupgap 
+
+  # duplicate & missing data, miss first 12 hours
+  path: data/test_sodar_shortdupgap 
+  
+  function: sodar_netcdf
+  # variables to validate
+  var: wind_speed
+  # nature of variable
+  # ws: wind speed -- run power curve functions
+  nature: ws
+  # target variable name to be displayed
+  target_var: sodar_ws
+  # data frequency in minutes
+  freq: 10
+  # flag value
+  flag: 999
+
+# data input to be compared with the baseline dataset
+comp:
+  - name: wrf
+
+    # data directory
+    # path: data/mw_data_wrf
+
+    # duplicate & missing data, miss first 12 hours
+    path: data/test_wrf_shortdupgap
+
+    function: wrf_netcdf
+    # variables to validate
+    var: 
+      - u
+      - v
+    # nature of variable
+    # ws: wind speed -- run power curve functions
+    nature: ws
+    # target variable name to be displayed
+    target_var: wrf_ws
+    # data frequency in minutes
+    freq: 5
+    # flag value
+    flag: 999
+
+# power curve
+power_curve: 
+  # power curve csv data location
+  path: data/power_curve
+  # power curve csv name
+  file: 2018COE_Market_Average_2.4MW_116.csv
+  # name of data processing function
+  function: pc_csv
+  # wind speed column name in data file
+  ws: Wind Speed [m/s]
+  # power column name in data file
+  power: Power [kW]
+  # hub height above ground level
+  hub_height: 80
+
+# reference
+reference: 
+  # variable name to be displayed
+  var: wind speed
+  # variable units
+  units: ms-1

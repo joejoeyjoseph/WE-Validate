@@ -1,0 +1,76 @@
+# validation location
+location: 
+  # latitude and longitude in degrees
+  # should be the same location as baseline dataset
+  lat: 55.006928
+  lon: 13.154189
+
+time:
+  window:
+    # validation period start time
+    start: 2020-10-04 00:00:00
+    # validation period end time
+    end: 2020-10-11 00:00:00
+
+# validation metrics to be calculated and plotted
+metrics:
+  - rmse
+  - mae
+
+levels: 
+  # height level of validation above ground level
+  height_agl: 
+    - 71
+  height_units: m
+
+# baseline dataset
+base:
+  name: fino2-71-wd
+  # data directory
+  path: data/fino2/vane-wd-71
+  # name of data processing function
+  function: fino2_dat
+  # names of variables in data to validate
+  var: Value
+  # nature of variable
+  # ws: wind speed -- run power curve functions
+  nature: wd
+  # data frequency in minutes
+  freq: 10
+
+# data input to be compared with the baseline dataset
+comp:
+  - name: fino2-51-wd
+    # data directory
+    path: data/fino2/vane-wd-51
+    # name of data processing function
+    function: fino2_dat
+    # names of variables in data to validate
+    var: Value
+    # nature of variable
+    # ws: wind speed -- run power curve functions
+    nature: wd
+    # data frequency in minutes
+    freq: 10
+  - name: fino2-91-wd
+    # data directory
+    path: data/fino2/vane-wd-91
+    # name of data processing function
+    function: fino2_dat
+    # names of variables in data to validate
+    var: Value
+    # nature of variable
+    # ws: wind speed -- run power curve functions
+    nature: wd
+    # data frequency in minutes
+    freq: 10
+
+# power curve
+power_curve: 
+
+# reference
+reference: 
+  # variable name to be displayed
+  var: wind direction
+  # variable units
+  units: deg

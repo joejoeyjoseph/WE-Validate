@@ -1,0 +1,133 @@
+# validation location
+location: 
+  # latitude and longitude in degrees
+  # should be the same location as baseline dataset
+  lat: 55.006928
+  lon: 13.154189
+
+time:
+  window:
+    # validation period start time
+    start: 2020-10-03 22:30:00
+    # validation period end time
+    end: 2020-10-10 23:00:00
+
+# validation metrics to be calculated and plotted
+metrics:
+  - rmse
+  - crmse
+  - nrmse
+  - bias
+  - bias_pct
+  - mae
+  - mae_pct
+
+levels: 
+  # height level of validation above ground level
+  height_agl: 
+    - 62
+    - 72
+    - 82
+    - 92
+  height_units: m
+
+# baseline dataset
+base:
+  name: fino2
+  # data directory
+  path: data/fino2/cup-ws
+  # name of data processing function
+  function: fino2_dats
+  # names of variables in data to validate
+  var: Value
+  # nature of variable
+  # ws: wind speed -- run power curve functions
+  nature: ws
+  # target variable name to be displayed
+  target_var: fino_ws
+  # data frequency in minutes
+  freq: 10
+  # flag value
+  flag: 999
+
+# data input to be compared with the baseline dataset
+comp:
+  - name: nrel
+    # data directory
+    path: data/submissions/NREL/
+    # data file
+    file: nrel_fino.csv
+    # name of data processing function
+    function: submission_csv
+    # names of variables in data to validate
+    # not being used in submission_csv
+    var: dummy
+    # nature of variable
+    # ws: wind speed -- run power curve functions
+    nature: ws
+    # target variable name to be displayed
+    target_var: nrel_ws
+    # data frequency in minutes
+    # even nrel wrf outputs are 5-minute data, 
+    # set this to 30 for baseline to average to 30-minute data
+    freq: 30
+    # flag value
+    flag: 999
+
+# ramps
+ramps:
+  # all ramps
+  - definition: r_abs_magnitude
+    # in units of base var
+    magnitude: 2
+    # must be a Timedelta duration argument, with numeric and units
+    duration: 4 hours
+  - definition: r_abs_magnitude
+    magnitude: 3
+    duration: 4 hours
+  # up ramps
+  - definition: r_magnitude
+    magnitude: 2
+    duration: 4 hours
+  - definition: r_magnitude
+    magnitude: 3
+    duration: 4 hours
+  # down ramps
+  - definition: r_magnitude
+    magnitude: -2
+    duration: 4 hours
+  - definition: r_magnitude
+    magnitude: -3
+    duration: 4 hours
+
+# power curve
+power_curve: 
+  # power curve csv data location
+  path: data/power_curve
+  # power curve csv name
+  file: 2018COE_Market_Average_2.4MW_116.csv
+  # name of data processing function
+  function: pc_csv
+  # wind speed column name in data file
+  ws: Wind Speed [m/s]
+  # power column name in data file
+  power: Power [kW]
+  # hub height above ground level
+  hub_height: 80
+
+# reference
+reference: 
+  # variable name to be displayed
+  var: wind speed
+  # variable units
+  units: ms-1
+
+# writing output file
+output:
+  writing: True
+  # path to write file
+  path: output/fino
+  # organization
+  org: nrel
+  # output file format
+  format: csv
