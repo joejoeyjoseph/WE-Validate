@@ -3,6 +3,7 @@
 # Joseph Lee <joseph.lee at pnnl.gov>
 
 import numpy as np
+import pandas as pd
 
 
 class r_abs_change_rate:
@@ -16,13 +17,40 @@ class r_abs_change_rate:
         self.reference = conf['reference']
         self.ramp_nature = 'all'
 
-    def compute(self, x, y):
+    def get_rampdf(self):
+        """Generate data frame with ramp classification."""
 
-        # x is baseline
-        return float(np.mean(y - x))
+        print()
+        print('classfy as a ramp event when |'+self.reference['var']
+              + '| exceeds '+str(self.ramps['percent'])+'% of '
+              + self.ramps['rated']+self.reference['units']+' in a window of '
+              + self.ramps['duration']
+              )
+
+        ramp_data_dn = self.ramp_data.copy()
+        ramp_data_dn.index = ramp_data_dn.index - pd.to_timedelta(
+            str(self.ramps['duration']))
+
+        # Get data frame of lagged differences
+        # Drop NA means dropping data points on both starting and ending
+        # points of a ramp period
+        ramp_df = (ramp_data_dn - self.ramp_data).dropna()
+
+        zeros_col = np.zeros(len(ramp_df))
+        ramp_df['base_ramp'] = zeros_col
+        ramp_df['comp_ramp'] = zeros_col
+
+        thres = self.ramps['rated']*self.ramps['percent']/100.
+
+        ramp_df.loc[abs(ramp_df[self.base_var])
+                    > thres, ['base_ramp']] = 1
+        ramp_df.loc[abs(ramp_df[self.comp_var])
+                    > thres, ['comp_ramp']] = 1
+
+        return ramp_df
 
     def get_ramp_method_name(self):
         """Get ramp method name as column name in output file."""
 
-        return self.ramps['definition']+'_'+str(self.ramps['percent'])\
-            + self.reference['units']+'_'+self.ramps['duration']
+        return self.ramps['definition']+'_'+str(self.ramps['percent'])+'%_'\
+            + self.ramps['rated']+self.reference['units']+'_'+self.ramps['duration']
