@@ -1,4 +1,4 @@
-# i-validate
+# WE-Validate
 
 This infrastructure code enables comparison of time series from arbitrary data sources using user-defined metrics. The tool is designed to be simple, modulized, and extensible. 
 
