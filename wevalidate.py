@@ -49,7 +49,8 @@ def compare(config=None):
     # Data frame containing data at all heights
     all_lev_df = pd.DataFrame()
     all_lev_stat_df = pd.DataFrame()
-    all_ramp_df = pd.DataFrame()
+    all_ramp_ts_df = pd.DataFrame()
+    all_ramp_stat_df = pd.DataFrame()
 
     for lev in conf['levels']['height_agl']:
 
@@ -141,10 +142,13 @@ def compare(config=None):
                         'plotting', 'plot_ramp')(
                             ramp_df, combine_df, conf, lev, ramps)
 
-                    plot_ramp.plot_ts_contingency()
-                    process_ramp.print_contingency_table()
-                    # Print skill scores
-                    # process_ramp.cal_print_scores()
+                    # Generating all the ramp texts and plots can take up memory space
+                    if 'plotting' in ramps:
+                    
+                        plot_ramp.plot_ts_contingency()
+                        process_ramp.print_contingency_table()
+                        # Print skill scores
+                        # process_ramp.cal_print_scores()
 
                     ramp_summary_df = process_ramp.generate_ramp_summary_df()
 
@@ -153,13 +157,24 @@ def compare(config=None):
                          [r.ramp_nature], [r.get_ramp_method_name()]]
                         )
 
-                    if all_ramp_df.empty:
-                        all_ramp_df = all_ramp_df.append(
+                    ramp_df.columns = pd.MultiIndex.from_product(
+                        [[lev], [c['name']], [c['target_var']],
+                         [r.ramp_nature], [r.get_ramp_method_name()], ramp_df.columns]
+                        )
+
+                    if all_ramp_stat_df.empty:
+                        all_ramp_stat_df = all_ramp_stat_df.append(
                             ramp_summary_df
                             )
+                        all_ramp_ts_df = all_ramp_ts_df.append(
+                            ramp_df
+                            )
                     else:
-                        all_ramp_df = pd.concat(
-                            [all_ramp_df, ramp_summary_df], axis=1
+                        all_ramp_stat_df = pd.concat(
+                            [all_ramp_stat_df, ramp_summary_df], axis=1
+                            )
+                        all_ramp_ts_df = pd.concat(
+                            [all_ramp_ts_df, ramp_df], axis=1
                             )
 
             combine_df.columns = pd.MultiIndex.from_product(
@@ -193,9 +208,13 @@ def compare(config=None):
 
             if 'ramps' in conf:
 
-                all_ramp_df.to_csv(
+                all_ramp_stat_df.to_csv(
                     os.path.join(output_path,
                                  'ramp_'+conf['output']['org']+'.csv')
+                    )
+                all_ramp_ts_df.to_csv(
+                    os.path.join(output_path,
+                                 'ramp_ts_'+conf['output']['org']+'.csv')
                     )
 
     pc_results = []
