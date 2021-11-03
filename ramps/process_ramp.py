@@ -26,13 +26,26 @@ class process_ramp:
         self.df['false_negative'] = false_col
         self.df['true_negative'] = false_col
 
-        self.df.loc[((self.df['base_ramp'] != 0)
-                    & (self.df['comp_ramp'] != 0)),
+        # self.df.loc[((self.df['base_ramp'] != 0)
+        #             & (self.df['comp_ramp'] != 0)),
+        #             ['true_positive']] = True
+        # self.df.loc[((self.df['base_ramp'] == 0)
+        #             & (self.df['comp_ramp'] != 0)),
+        #             ['false_positive']] = True
+        # self.df.loc[((self.df['base_ramp'] != 0)
+        #             & (self.df['comp_ramp'] == 0)),
+        #             ['false_negative']] = True
+        # self.df.loc[((self.df['base_ramp'] == 0)
+        #             & (self.df['comp_ramp'] == 0)),
+        #             ['true_negative']] = True
+
+        self.df.loc[((self.df['base_ramp'] == 1)
+                    & (self.df['comp_ramp'] == 1)),
                     ['true_positive']] = True
         self.df.loc[((self.df['base_ramp'] == 0)
-                    & (self.df['comp_ramp'] != 0)),
+                    & (self.df['comp_ramp'] == 1)),
                     ['false_positive']] = True
-        self.df.loc[((self.df['base_ramp'] != 0)
+        self.df.loc[((self.df['base_ramp'] == 1)
                     & (self.df['comp_ramp'] == 0)),
                     ['false_negative']] = True
         self.df.loc[((self.df['base_ramp'] == 0)
@@ -96,7 +109,8 @@ class process_ramp:
             'critical_success_index': self.cal_csi(),
             'frequency_bias_score': self.cal_fbias(),
             'false_alarm_ratio': self.cal_far(),
-            'forecast_accuracy': self.cal_fa()
+            'forecast_accuracy': self.cal_fa(),
+            'Peirces_skill_score': self.cal_pss()
             }
 
         return pd.DataFrame.from_dict(data, orient='index')
@@ -147,9 +161,9 @@ class process_ramp:
         if msg is True:
             print('Frequency bias score (the ratio of the frequency of '
                   + 'forecasted ramp events to the ')
-            print('frequency of observed ramp events), where a negative value '
+            print('frequency of observed ramp events), where a value < 1 '
                   + 'represents the system ')
-            print('tends to underforecast and a positive value represents '
+            print('tends to underforecast and a value > 1 represents '
                   + 'the system tends to ')
             print('overforecast: '+str(np.round(fbias, 3)))
             print()
@@ -159,10 +173,10 @@ class process_ramp:
     def cal_far(self, msg=False):
         """False alarm ratio."""
 
-        if (self.true_pos+self.false_pos) == 0:
+        if (self.true_neg+self.false_pos) == 0:
             far = np.nan
         else:
-            far = self.false_pos/(self.true_pos+self.false_pos)
+            far = self.false_pos/(self.true_neg+self.false_pos)
 
         if msg is True:
             print('False alarm ratio (the fraction of predicted ramp events '
@@ -189,10 +203,18 @@ class process_ramp:
     def cal_pss(self, msg=False):
         """Peirce's skill score."""
 
-        pss = ((self.true_pos*self.true_neg)
-               - (self.false_pos*self.false_neg))\
-            / ((self.true_pos+self.false_neg)
-               * (self.false_pos+self.true_neg))
+        # pss = ((self.true_pos*self.true_neg)
+        #        - (self.false_pos*self.false_neg))\
+        #     / ((self.true_pos+self.false_neg)
+        #        * (self.false_pos+self.true_neg))
+
+        pod = self.cal_pod()
+        far = self.cal_far()
+
+        if (np.isnan(pod)) or (np.isnan(far)):
+            pss = np.nan
+        else:
+            pss = pod-far
 
         return pss
 
@@ -206,3 +228,4 @@ class process_ramp:
         self.cal_fbias(msg=True)
         self.cal_far(msg=True)
         self.cal_fa(msg=True)
+        self.cal_pss(msg=True)
