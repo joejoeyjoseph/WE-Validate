@@ -108,9 +108,10 @@ class process_ramp:
             'probability_of_detection': self.cal_pod(),
             'critical_success_index': self.cal_csi(),
             'frequency_bias_score': self.cal_fbias(),
-            'false_alarm_ratio': self.cal_far(),
+            'false_alarm_rate': self.cal_farate(),
             'forecast_accuracy': self.cal_fa(),
-            'Peirces_skill_score': self.cal_pss()
+            'peirces_skill_score': self.cal_pss(),
+            'symmetric_extreme_dependency_score': self.cal_seds()
             }
 
         return pd.DataFrame.from_dict(data, orient='index')
@@ -170,20 +171,20 @@ class process_ramp:
 
         return fbias
 
-    def cal_far(self, msg=False):
-        """False alarm ratio."""
+    def cal_farate(self, msg=False):
+        """False alarm rate."""
 
         if (self.true_neg+self.false_pos) == 0:
-            far = np.nan
+            farate = np.nan
         else:
-            far = self.false_pos/(self.true_neg+self.false_pos)
+            farate = self.false_pos/(self.true_neg+self.false_pos)
 
         if msg is True:
-            print('False alarm ratio (the fraction of predicted ramp events '
-                  + 'that did not occur): '+str(np.round(far, 3)))
+            print('False alarm rate (the fraction of predicted ramp events '
+                  + 'that did not occur): '+str(np.round(farate, 3)))
             print()
 
-        return far
+        return farate
 
     def cal_fa(self, msg=False):
         """Forecast accuracy."""
@@ -209,14 +210,27 @@ class process_ramp:
         #        * (self.false_pos+self.true_neg))
 
         pod = self.cal_pod()
-        far = self.cal_far()
+        farate = self.cal_farate()
 
-        if (np.isnan(pod)) or (np.isnan(far)):
+        if (np.isnan(pod)) or (np.isnan(farate)):
             pss = np.nan
         else:
-            pss = pod-far
+            pss = pod-farate
 
         return pss
+
+    def cal_seds(self, msg=False):
+        """Symmetric extreme dependency score."""
+
+        if self.true_pos == 0:
+            seds = np.nan
+        else: 
+            n = len(self.df)
+            seds = ((np.log((self.true_pos+self.false_pos)/n)\
+                     +np.log((self.true_pos+self.false_neg)/n))\
+                    / np.log(self.true_pos/n)) - 1
+
+        return seds
 
     def cal_print_scores(self):
         """Calculate and print different ramp skill scores."""
@@ -226,6 +240,7 @@ class process_ramp:
         self.cal_pod(msg=True)
         self.cal_csi(msg=True)
         self.cal_fbias(msg=True)
-        self.cal_far(msg=True)
+        self.cal_farate(msg=True)
         self.cal_fa(msg=True)
         self.cal_pss(msg=True)
+        self.cal_seds(msg=True)
