@@ -38,6 +38,10 @@ class submission_csv:
             lev_str = str(int(float(lev)))
             col = [s for s in df_all.columns if lev_str in s and nature in s]
 
+        # For Power
+        if (not col) and (nature == 'power'):
+            col = [s for s in df_all.columns if nature.casefold() in s.casefold()]
+
         df = df_all[col]
 
         if len(col) > 1:
