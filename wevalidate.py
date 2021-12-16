@@ -144,11 +144,13 @@ def compare(config=None):
 
                     # Generating all the ramp texts and plots can take up memory space
                     if 'plotting' in ramps:
+
+                        if ramps['plotting'] is True:
                     
-                        plot_ramp.plot_ts_contingency()
-                        process_ramp.print_contingency_table()
-                        # Print skill scores
-                        # process_ramp.cal_print_scores()
+                            plot_ramp.plot_ts_contingency()
+                            process_ramp.print_contingency_table()
+                            # Print skill scores
+                            # process_ramp.cal_print_scores()
 
                     ramp_summary_df = process_ramp.generate_ramp_summary_df()
 
@@ -261,6 +263,44 @@ def compare(config=None):
             pc_csv.plot_power_ts()
 
             pc_csv.plot_power_scatter()
+
+            # Generate derived power output file
+            if ('output_path' in p_curve) and ('wt_num' in p_curve):
+
+                # Convert to MW for wind farm
+                power_df = power_df * p_curve['wt_num'] / 1e3
+                # print(power_df)
+                # print(c['name'])
+
+                # c should has 1 element
+                col = [s for s in power_df.columns if c['name'] in s][0]
+                # print(col)
+                # print(col)
+
+                new_col = 'power_'+str(p_curve['hub_height']).replace('.', '-')+conf['levels']['height_units']
+                # print(new_col)
+
+                # power_df[col]
+
+                # print(power_df.rename({col: new_col}, axis=1))
+
+                power_df.rename(columns={col: new_col}, inplace=True)
+
+                # 'power_78-25m'
+
+                power_df[new_col].to_csv(
+                    os.path.join(output_path, p_curve['output_path'], 
+                    'derived_power_'+c['name']+'.csv')
+                    )
+
+                # power_df[col].to_csv(
+                #     os.path.join(output_path, 
+                #     'test.csv')
+                #     )
+
+                # power_df.columns = pd.MultiIndex.from_product(
+                # [[lev], [c['name']], combine_df.columns]
+                # )
 
         else:
 
