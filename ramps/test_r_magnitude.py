@@ -127,9 +127,9 @@ def test_cal_fbias():
         )
 
 
-def test_cal_far():
+def test_cal_farate():
 
-    assert get_contingency_table().cal_far() == 0.5
+    assert get_contingency_table().cal_farate() == 0.5
 
 
 def test_cal_fa():
