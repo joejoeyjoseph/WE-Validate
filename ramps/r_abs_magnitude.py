@@ -22,9 +22,9 @@ class r_abs_magnitude:
         """Generate data frame with ramp classification."""
 
         print()
-        print('classfy as a ramp event when '+self.reference['var']
-              + ' exceeds |'+str(self.ramps['magnitude'])
-              + '| '+self.reference['units']+' in a window of '
+        print('classfy as a ramp event when |'+self.reference['var']
+              + '| exceeds '+str(self.ramps['magnitude'])
+              + self.reference['units']+' in a window of '
               + self.ramps['duration']
               )
 

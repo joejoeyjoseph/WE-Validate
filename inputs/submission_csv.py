@@ -38,6 +38,10 @@ class submission_csv:
             lev_str = str(int(float(lev)))
             col = [s for s in df_all.columns if lev_str in s and nature in s]
 
+        # For Power
+        if (not col) and (nature == 'power'):
+            col = [s for s in df_all.columns if nature.casefold() in s.casefold()]
+
         df = df_all[col]
 
         if len(col) > 1:
@@ -54,6 +58,8 @@ class submission_csv:
             t_col = 'time (UTC)'
         if 'Date & Time (UTC)' in df_all.columns:
             t_col = 'Date & Time (UTC)'
+        if 't' in df_all.columns:
+            t_col = 't'
 
         df = df.set_index(df_all[t_col]).sort_index()
         df.index.rename('t', inplace=True)

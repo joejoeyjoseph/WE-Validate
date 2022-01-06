@@ -1,6 +1,6 @@
 # This performs a normalized root mean squared error (nRMSE)
 # calculation, essentially calculate rmse using normalized data:
-# rmse = root(mean( ( (x/mean(x)) - (y/mean(y)) )^2 ))
+# nrmse = root(mean( ( (x/mean(x)) - (y/mean(y)) )^2 ))
 #
 # Joseph Lee <joseph.lee at pnnl.gov>
 

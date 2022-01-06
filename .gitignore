@@ -105,3 +105,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# notebooks
+/notebooks/z_demo_submissions.ipynb
+/notebooks/testbed.ipynb
+
+# outputs
+/output
