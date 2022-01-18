@@ -1,6 +1,6 @@
 # WE-Validate
 
-This infrastructure code enables comparison of time series from arbitrary data sources using user-defined metrics. The tool is designed to be simple, modulized, and extensible. 
+This infrastructure code enables comparison of time series from arbitrary data sources using user-defined metrics. The tool is designed to be simple, modulized, and extensible. We call our tool WE-Validate to gear towards forecast validation using observations and simulations for wind energy (“WE”) applications. 
 
 The default branch is `main`, and active development is under `dev`. Pull requests from `dev` to `main` will be done regularly.
 
@@ -10,7 +10,7 @@ The default branch is `main`, and active development is under `dev`. Pull reques
 
 For Mac users, in Terminal, `cd` to a destinated directory, then
 
-`$ git clone https://github.com/joejoeyjoseph/i-validate.git`
+`$ git clone https://github.com/joejoeyjoseph/WE-Validate.git`
 
 For Windows users, [Git for Windows](https://gitforwindows.org/) or running Linux Bash Shell on Windows is an option. 
 
@@ -28,7 +28,7 @@ If `pip` is not installed on your machine, you can visit the [pip website](https
 
 ## Configuration
 
-We use the YAML format for configuration. An example configuration is provided in `config/config.yaml`. Explanations are embedded in `config.yaml`, in which the comments started with `#`.
+We use the YAML format for configuration file. An example configuration is provided in `config/config.yaml`. Explanations are embedded in `config.yaml`, in which the comments started with `#`.
 
 In `config.yaml`, first, you need to specify the `location` (assumed to be the WGS84 latitude, `lat`, and longitude, `lon`, coordinates) as well as the evaluation duration in `time` (the `start` and `end` times).
 
